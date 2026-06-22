@@ -1,0 +1,17 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Secrets — never commit
+.env
+
+# Local index caches / scratch archives (the real index lives in the OS cache dir)
+*.sqlite
+*.sqlite-*
+/sample_archive/
+/tmp_archive/
+
+# OS
+.DS_Store

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Precedent Database</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="app-header">
+    <div class="header-row">
+      <h1>Precedent Database</h1>
+      <nav class="primary-nav" aria-label="Primary">
+        <button type="button" class="nav-btn" data-view="library">Library</button>
+        <button type="button" class="nav-btn" data-view="add">Add</button>
+        <button type="button" class="nav-btn" id="rebuildBtn">Rebuild index</button>
+      </nav>
+    </div>
+    <p id="statusBar" class="status-bar" role="status" aria-live="polite"></p>
+  </header>
+
+  <main id="main">
+    <!-- Setup: choose the archive folder -->
+    <section id="setupView" class="view" aria-labelledby="setupHeading" hidden>
+      <h2 id="setupHeading">Choose your archive folder</h2>
+      <p>
+        Point the app at the folder that holds (or will hold) your screenshots and
+        files. The app reads that folder and writes notes <em>alongside</em> your
+        files — it never moves, renames, or alters them.
+      </p>
+      <form id="setupForm" class="stack">
+        <div class="field">
+          <label for="archivePath">Absolute path to the folder</label>
+          <input id="archivePath" name="archivePath" type="text"
+                 autocomplete="off" spellcheck="false"
+                 placeholder="/Users/you/Pictures/Precedents" required />
+        </div>
+        <button type="submit" class="btn primary">Use this folder</button>
+      </form>
+    </section>
+
+    <!-- Library: browse / filter / search -->
+    <section id="libraryView" class="view" aria-labelledby="libraryHeading" hidden>
+      <h2 id="libraryHeading">Library</h2>
+
+      <form id="filterForm" class="filters" role="search" aria-label="Filter precedents">
+        <div class="field grow">
+          <label for="searchInput">Search</label>
+          <input id="searchInput" type="search" placeholder="title, tag, alt text, notes…" />
+        </div>
+        <div class="field">
+          <label for="typeFilter">Type</label>
+          <select id="typeFilter"><option value="">All types</option></select>
+        </div>
+        <div class="field">
+          <label for="tagFilter">Tag</label>
+          <select id="tagFilter"><option value="">All tags</option></select>
+        </div>
+        <div class="field">
+          <label for="sortSelect">Sort</label>
+          <select id="sortSelect">
+            <option value="updated">Recently updated</option>
+            <option value="created">Recently created</option>
+            <option value="title">Title A–Z</option>
+          </select>
+        </div>
+        <fieldset class="view-toggle">
+          <legend>View</legend>
+          <button type="button" id="galleryBtn" class="btn toggle" aria-pressed="true">Gallery</button>
+          <button type="button" id="listBtn" class="btn toggle" aria-pressed="false">List</button>
+        </fieldset>
+      </form>
+
+      <p id="resultCount" class="result-count" role="status" aria-live="polite"></p>
+      <div id="results" class="results gallery" aria-busy="false"></div>
+    </section>
+
+    <!-- Add: local + internet intake -->
+    <section id="addView" class="view" aria-labelledby="addHeading" hidden>
+      <h2 id="addHeading">Add precedents</h2>
+
+      <h3 id="dropHeading">Drop, pick, or paste images</h3>
+      <div id="dropZone" class="dropzone" role="group" aria-labelledby="dropHeading"
+           tabindex="0" aria-describedby="dropHelp">
+        <p id="dropHelp">
+          Drag images here, or use the picker. You can also paste an image from the
+          clipboard anywhere on this screen. Each image becomes its own entry.
+        </p>
+        <div class="field">
+          <label for="fileInput">Choose image files</label>
+          <input id="fileInput" type="file" accept="image/*" multiple />
+        </div>
+        <div class="field check">
+          <input id="groupCheck" type="checkbox" />
+          <label for="groupCheck">Group these into one project entry (a folder)</label>
+        </div>
+        <div class="field" id="groupTitleField" hidden>
+          <label for="groupTitle">Project title</label>
+          <input id="groupTitle" type="text" placeholder="e.g. Therme Vals study" />
+        </div>
+      </div>
+
+      <h3>Add an image already in the archive</h3>
+      <form id="existingForm" class="row">
+        <div class="field grow">
+          <label for="existingPath">Path relative to the archive folder</label>
+          <input id="existingPath" type="text" placeholder="screenshots/IMG_1024.png" />
+        </div>
+        <button type="submit" class="btn">Add it</button>
+      </form>
+
+      <h3>Add from a web link</h3>
+      <form id="urlForm" class="row">
+        <div class="field grow">
+          <label for="urlInput">Page URL</label>
+          <input id="urlInput" type="url" placeholder="https://example.com/project" />
+        </div>
+        <button type="submit" class="btn">Fetch &amp; add</button>
+      </form>
+      <p class="hint">
+        Uses the page's Open Graph / oEmbed data and its main image. Login-walled
+        sites (e.g. Instagram) are unreliable — for those, take a screenshot and
+        drop it in above.
+      </p>
+
+      <h3>Migration</h3>
+      <button type="button" id="genMissingBtn" class="btn">
+        Generate all missing alt text
+      </button>
+    </section>
+
+    <!-- Entry detail -->
+    <section id="entryView" class="view" aria-labelledby="entryTitle" hidden>
+      <p><button type="button" id="backBtn" class="btn link">&larr; Back to library</button></p>
+      <div id="entryBody"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
